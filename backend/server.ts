@@ -62,9 +62,15 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: err.message || 'Internal server error' });
 });
 
-// Connect to MongoDB and start listening
-connectDB().then(() => {
+// Connect to MongoDB
+connectDB();
+
+// Export the app for Vercel Serverless
+export default app;
+
+// Start the server locally only in development
+if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`IMS Backend Server running on port ${PORT}`);
   });
-});
+}
