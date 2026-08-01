@@ -6,7 +6,10 @@ export const connectDB = async (): Promise<boolean> => {
   const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ims_db';
   try {
     mongoose.set('strictQuery', false);
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    });
     isMongoConnected = true;
     console.log(`MongoDB Connected successfully`);
     return true;

@@ -50,14 +50,13 @@ export default function RecordSalePage() {
   const itemDropdownRef = useRef<HTMLDivElement>(null);
   const itemSearchInputRef = useRef<HTMLInputElement>(null);
 
-  const getLocalDatetimeString = () => {
-    const d = new Date();
+  const formatToHTMLDateTime = (date: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
   // Form Fields
-  const [saleDate, setSaleDate] = useState(getLocalDatetimeString());
+  const [saleDate, setSaleDate] = useState(new Date());
   const [customerType, setCustomerType] = useState<'Cash' | 'Customer'>('Cash');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [customCustomerName, setCustomCustomerName] = useState('');
@@ -65,6 +64,7 @@ export default function RecordSalePage() {
   const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'Card' | 'Bank Transfer' | 'Credit'>('Cash');
   const [discount, setDiscount] = useState(0);
   const [taxPercent, setTaxPercent] = useState(8);
+  const [saleNotes, setSaleNotes] = useState('');
 
   // Cart
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -321,7 +321,7 @@ export default function RecordSalePage() {
         paymentMethod,
         discount,
         tax: taxAmount,
-        notes: '',
+        notes: saleNotes && typeof saleNotes === 'string' ? saleNotes.trim() : '',
         items: cart.map(c => ({
           itemId: c.itemId,
           quantity: c.quantity,
@@ -566,12 +566,16 @@ export default function RecordSalePage() {
               </label>
               <input
                 type="datetime-local"
-                required
-                value={saleDate}
-                max={getLocalDatetimeString()}
+                required 
+                value={formatToHTMLDateTime(saleDate)}
+                max={formatToHTMLDateTime(new Date())}
                 onClick={e => e.currentTarget.showPicker?.()}
                 onKeyDown={handleKeyDown}
-                onChange={e => setSaleDate(e.target.value)}
+                onChange={e => {
+                  if (e.target.value) {
+                    setSaleDate(new Date(e.target.value));
+                  }
+                }}
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"
               />
             </div>
@@ -728,6 +732,18 @@ export default function RecordSalePage() {
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
+            </div>
+            {/* Sale Notes (optional) */}
+            <div className="mt-4">
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Sale Notes (optional)</label>
+              <textarea
+                value={saleNotes}
+                onChange={e => setSaleNotes(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Add any remarks about this sale..."
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
+                rows={3}
+              />
             </div>
 
             {/* Price Calculations Summary */}

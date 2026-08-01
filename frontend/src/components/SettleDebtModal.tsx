@@ -24,14 +24,13 @@ export const SettleDebtModal: React.FC<SettleDebtModalProps> = ({
   onSuccess,
   customer
 }) => {
-  const getLocalDatetimeString = () => {
-    const d = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  };
+  const formatToHTMLDateTime = (date: Date) => {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
 
   const [amount, setAmount] = useState<number>(customer?.currentBalance || 0);
-  const [date, setDate] = useState<string>(getLocalDatetimeString());
+  const [date, setDate] = useState<Date>(new Date());
   const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'Card' | 'Bank Transfer' | 'Cheque'>('Cash');
   const [reference, setReference] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
@@ -189,13 +188,19 @@ export const SettleDebtModal: React.FC<SettleDebtModalProps> = ({
               </label>
               <input
                 type="datetime-local"
-                value={date}
-                max={getLocalDatetimeString()}
+                value={formatToHTMLDateTime(date)}
+                max={formatToHTMLDateTime(new Date())}
                 onClick={e => e.currentTarget.showPicker?.()}
                 onKeyDown={e => handleKeyDown(e, 'date')}
                 onChange={e => {
-                  setDate(e.target.value);
-                  validateField('date', e.target.value);
+                  const value = e.target.value; 
+                  if (value) {
+                    const parsedDate = new Date(value);
+                    setDate(parsedDate);
+                    validateField('date', parsedDate);
+                  } else {
+                    validateField('date', null);
+                  }
                 }}
                 className={`w-full px-3.5 py-2.5 bg-slate-950 border rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none cursor-pointer ${
                   errors.date ? 'border-rose-500 focus:border-rose-400' : 'border-slate-800 focus:border-emerald-500'

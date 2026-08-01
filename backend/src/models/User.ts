@@ -6,9 +6,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   role: string;
-  otpCode?: string;
-  otpExpiresAt?: Date;
-  otpLastSentAt?: Date;
+
   createdAt: Date;
 }
 
@@ -18,9 +16,7 @@ const UserSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
     role: { type: String, default: 'admin' },
-    otpCode: { type: String, default: null },
-    otpExpiresAt: { type: Date, default: null },
-    otpLastSentAt: { type: Date, default: null }
+
   },
   {
     timestamps: true,
@@ -30,9 +26,7 @@ const UserSchema: Schema = new Schema(
         delete ret._id;
         delete ret.__v;
         delete ret.passwordHash;
-        delete ret.otpCode;
-        delete ret.otpExpiresAt;
-        delete ret.otpLastSentAt;
+
       }
     }
   }
