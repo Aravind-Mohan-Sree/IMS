@@ -1,23 +1,40 @@
 import mongoose from 'mongoose';
 
-let isMongoConnected = false;
+const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ims_db';
+
+let cached = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
 
 export const connectDB = async (): Promise<boolean> => {
-  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ims_db';
-  try {
+  if (cached.conn) {
+    return true;
+  }
+
+  if (!cached.promise) {
     mongoose.set('strictQuery', false);
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 10000,
+    
+    const opts = {
+      bufferCommands: false, 
+      serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-    });
-    isMongoConnected = true;
-    console.log(`MongoDB Connected successfully`);
+    };
+
+    cached.promise = mongoose.connect(mongoURI, opts).then((m) => m);
+  }
+
+  try {
+    cached.conn = await cached.promise;
     return true;
   } catch (err: any) {
     console.error(`MongoDB Connection Error: ${err.message}`);
-    isMongoConnected = false;
+    cached.promise = null; 
     return false;
   }
 };
 
-export const getIsMongoConnected = () => isMongoConnected;
+export const getIsMongoConnected = () => {
+  return mongoose.connection.readyState === 1;
+};
