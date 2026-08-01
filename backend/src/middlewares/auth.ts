@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
+import { connectDB } from '../config/db';
 
 export const getAccessTokenSecret = () =>
   process.env.ACCESS_TOKEN_SECRET || 'ims_access_token_secret_key_2026';
@@ -26,6 +27,8 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export const authenticateToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  await connectDB();
+  
   // Extract token from cookies first, or fallback to Authorization header
   let token = req.cookies?.accessToken;
 

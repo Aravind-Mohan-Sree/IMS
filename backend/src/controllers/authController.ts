@@ -5,6 +5,7 @@ import { UserModel } from '../models/User';
 import { getAccessTokenSecret, getRefreshTokenSecret, AuthenticatedRequest } from '../middlewares/auth';
 import { sendOtpEmail } from '../services/emailService';
 import redisClient from '../lib/redis';
+import { connectDB } from '../config/db';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -225,6 +226,8 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
+  await connectDB();
+
   const token = req.cookies?.refreshToken;
 
   if (!token) {
