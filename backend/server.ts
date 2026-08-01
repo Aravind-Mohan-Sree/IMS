@@ -11,7 +11,7 @@ import exportRoutes from './src/routes/exportRoutes';
 import categoryRoutes from './src/routes/categoryRoutes';
 import { connectDB } from './src/config/db';
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
