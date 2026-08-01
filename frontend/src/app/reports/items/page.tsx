@@ -346,12 +346,6 @@ export default function ItemsReportPage() {
                   <FiPackage className="text-teal-400" /> {selectedItemReport.name}
                 </h3>
               </div>
-              <button
-                onClick={() => setSelectedItemReport(null)}
-                className="p-2 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 rounded-xl transition-colors"
-              >
-                <FiX className="w-5 h-5" />
-              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs bg-slate-950 p-3.5 rounded-xl border border-slate-800/80">
@@ -395,7 +389,7 @@ export default function ItemsReportPage() {
                 onClick={() => setSelectedItemReport(null)}
                 className="px-4 py-2 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
               >
-                Close Details
+                Close
               </button>
             </div>
           </div>

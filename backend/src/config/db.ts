@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// import 'dotenv/config';
 
 const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ims_db';
 
@@ -27,6 +28,7 @@ export const connectDB = async (): Promise<boolean> => {
 
   try {
     cached.conn = await cached.promise;
+    console.log(`MongoDB Connected successfully`);
     return true;
   } catch (err: any) {
     console.error(`MongoDB Connection Error: ${err.message}`);
